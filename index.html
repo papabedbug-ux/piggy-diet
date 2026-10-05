@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>全體豬豬減脂達標計算機 8.0 🏊‍♂️🐷</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="豬豬減脂">
+    <meta name="theme-color" content="#ffe5ec">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/235/235384.png">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; 
+            background-color: #fff0f3; 
+            color: #5c3d46; 
+            padding: 16px 12px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent; 
+        }
+        .card { 
+            background: #ffffff; 
+            padding: 22px 16px; 
+            border-radius: 28px; 
+            box-shadow: 0 12px 28px rgba(255, 117, 143, 0.12); 
+            max-width: 440px; 
+            width: 100%; 
+            border: 3px solid #ffccd5; 
+        }
+        h1 { 
+            text-align: center; 
+            color: #ff4d6d; 
+            font-size: 21px; 
+            margin-bottom: 3px; 
+        }
+        h2 { 
+            font-size: 13px; 
+            text-align: center; 
+            color: #c9939e; 
+            margin-bottom: 12px; 
+            font-weight: 500; 
+        }
+
+        /* 目標個人檔案小卡 */
+        .profile-banner {
+            background: #fff5f7;
+            border: 1px dashed #ffb3c1;
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .profile-btn {
+            background: #ff758f;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* 日期選擇導航列 */
+        .date-navigator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff5f6;
+            border: 1px solid #ffccd5;
+            padding: 6px 10px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+        .date-btn {
+            background: none;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 4px 8px;
+            color: #ff4d6d;
+            font-weight: bold;
+        }
+        .date-input {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: bold;
+            color: #5c3d46;
+            text-align: center;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        /* 狀態看板 */
+        .status-box { 
+            background: #fff0f3; 
+            padding: 16px 12px; 
+            border-radius: 20px; 
+            margin-bottom: 18px; 
+            text-align: center; 
+            border: 1.5px solid #ffccd5; 
+        }
+        .status-title { 
+            font-size: 13px; 
+            color: #a26775; 
+            font-weight: 600;
+        }
+        .net-calories { 
+            font-size: 34px; 
+            font-weight: 800; 
+            color: #c9184a; 
+            margin: 4px 0; 
+            letter-spacing: -0.5px;
+        }
+        .net-calories.alert { 
+            color: #b7094c; 
+        }
+        .target-subtext { 
+            font-size: 12px; 
+            color: #8b5d67; 
+        }
+        .result-status { 
+            font-size: 14px; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            padding: 8px 12px; 
+            border-radius: 12px; 
+            display: inline-block;
+            width: 92%;
+        }
+        .status-success { 
+            background-color: #e8f5e9; 
+            color: #2b7a30; 
+            border: 1px solid #c8e6c9;
+        }
+        .status-fail { 
+            background-color: #ffe5ec; 
+            color: #a4133c; 
+            border: 1px solid #ffccd5;
+        }
+        
+        /* 區塊標題 */
+        .section-title { 
+            font-weight: 700; 
+            font-size: 14px; 
+            margin: 14px 0 8px 0; 
+            border-left: 4px solid #ff4d6d; 
+            padding-left: 8px; 
+            color: #5c3d46;
+        }
+
+        /* 彈性輸入列 */
+        .input-group { 
+            display: flex; 
+            gap: 6px; 
+            margin-bottom: 12px; 
+            width: 100%;
+        }
+        input[type="text"], input[type="number"], select { 
+            flex: 1; 
+            min-width: 0;
+            padding: 10px 10px; 
+            border: 1.5px solid #ffccd5; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            outline: none; 
+            background: #fff;
+            color: #5c3d46;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus { 
+            border-color: #ff4d6d; 
+        }
+
+        /* 按鈕樣式 */
+        .btn-action { 
+            flex-shrink: 0;
+            white-space: nowrap; 
+            padding: 10px 15px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
+        .btn-action:active {
+            transform: scale(0.96);
+        }
+        .btn-burn { 
+            background-color: #e2f0d9; 
+            border: 1.5px solid #b8dfaa; 
+            color: #2d6a4f; 
+        }
+        .btn-eat { 
+            background-color: #ffe5ec; 
+            border: 1.5px solid #ffb3c1; 
+            color: #a4133c; 
+        }
+
+        /* 清單明細 */
+        .log-container { 
+            background: #fff9fa; 
+            padding: 10px 12px; 
+            border-radius: 14px; 
+            max-height: 150px; 
+            overflow-y: auto; 
+            font-size: 13px; 
+            border: 1px solid #ffe5ec; 
+        }
+        .log-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 6px 0; 
+            border-bottom: 1px dashed #ffd6dc; 
+        }
+        .log-row:last-child { 
+            border-bottom: none; 
+        }
+        .log-del-btn { 
+            background: none; 
+            border: none; 
+            color: #c9939e; 
+            cursor: pointer; 
+            font-size: 14px; 
+            padding: 2px 6px; 
+            border-radius: 6px;
+        }
+        .log-del-btn:hover { 
+            color: #ff4d6d; 
+            background: #ffe5ec;
+        }
+
+        .reset-btn { 
+            width: 100%; 
+            background-color: #fff0f3; 
+            border: 1.5px solid #ffccd5; 
+            color: #a4133c; 
+            margin-top: 14px; 
+            font-weight: bold; 
+            padding: 11px; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-size: 13px; 
+        }
+
+        /* 彈出設定視窗 (Modal) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+        .modal {
+            background: white;
+            border-radius: 24px;
+            padding: 22px 18px;
+            max-width: 400px;
+            width: 100%;
+            border: 3px solid #ffb3c1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            text-align: center;
+            color: #ff4d6d;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+        .form-row {
+            margin-bottom: 10px;
+        }
+        .form-row label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #7f5560;
+            margin-bottom: 4px;
+        }
+        .form-row input, .form-row select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1.5px solid #ffccd5;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+        .modal-save-btn {
+            width: 100%;
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 12px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🐷 豬豬安全減脂達標計算機 </h1>
+    <h2 id="targetSubtitle">目標：計算專屬每日安全豬飼料量 🎯</h2>
+
+    <!-- 個人檔案與目標摘要看板 -->
+    <div class="profile-banner">
+        <div id="profileSummary">載入個人設定中...</div>
+        <button class="profile-btn" onclick="openProfileModal()">⚙️ 重新計算</button>
+    </div>
+    
+    <!-- 每日記錄切換器 -->
+    <div class="date-navigator">
+        <button class="date-btn" onclick="shiftDate(-1)">◀ 昨天</button>
+        <input type="date" id="targetDate" class="date-input" onchange="switchDate(this.value)">
+        <button class="date-btn" onclick="shiftDate(1)">明天 ▶</button>
+    </div>
+
+    <!-- 熱量狀況看板 -->
+    <div class="status-box">
+        <div class="status-title">今日已吃進豬飼料</div>
+        <div id="netCal" class="net-calories">0 大卡</div>
+        <div id="targetInfo" class="target-subtext">今日燃脂總限額：計算中...</div>
+        <div>
+            <div id="dietStatus" class="result-status status-success">今日狀態：安全減脂中！💪</div>
+        </div>
+    </div>
+
+    <!-- 1. 運動額度輸入區 -->
+    <div class="section-title">🏃‍♂️ 1. 手錶運動消耗（賺取吃吃額度）</div>
+    <div class="input-group">
+        <input type="text" id="burnName" placeholder="運動項目 (例:晨泳)">
+        <input type="number" id="burnCal" placeholder="卡路里" inputmode="numeric">
+        <button class="btn-action btn-burn" onclick="addCustomBurn()">計入</button>
+    </div>
+
+    <!-- 2. 食物攝取輸入區（具備衛福部熱量自動帶入） -->
+    <div class="section-title">🍰 2. 今日飲食攝取（輸入自動算熱量）</div>
+    <div class="input-group">
+        <input type="text" id="foodName" list="tfdaFoodList" placeholder="吃了什麼 (例:茶葉蛋)" oninput="autoEstimateCal(this.value)">
+        <datalist id="tfdaFoodList"></datalist>
+        <input type="number" id="foodCal" placeholder="卡路里" inputmode="numeric">
+        <button class="btn-action btn-eat" onclick="addCustomCal()">計入</button>
+    </div>
+
+    <!-- 3. 今日紀錄明細 -->
+    <div class="section-title">📋 當日戰績流水帳</div>
+    <div id="logList" class="log-container">這天還沒有任何紀錄喔...</div>
+
+    <button class="reset-btn" onclick="resetLog()">🔄 清空這天的紀錄</button>
+</div>
+
+<!-- 設定個人身體數值彈出視窗 -->
+<div id="profileModal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-title">🐷 設定你的減脂檔案</div>
+        <div class="form-row">
+            <label>生理性別</label>
+            <select id="userGender">
+                <option value="female">女孩子 (預設基礎底線 1200 kcal)</option>
+                <option value="male">男孩子 (預設基礎底線 1500 kcal)</option>
+            </select>
+        </div>
+        <div class="form-row" style="display:flex; gap:8px;">
+            <div style="flex:1;">
+                <label>年齡</label>
+                <input type="number" id="userAge" placeholder="歲" value="26">
+            </div>
+            <div style="flex:1;">
+                <label>身高 (cm)</label>
+                <input type="number" id="userHeight" placeholder="cm" value="162">
+            </div>
+        </div>
+        <div class="form-row" style="display:flex; gap:8px;">
+            <div style="flex:1;">
+                <label>目前體重 (kg)</label>
+                <input type="number" id="userWeight" step="0.1" placeholder="kg" value="58">
+            </div>
+            <div style="flex:1;">
+                <label>目標體重 (kg)</label>
+                <input type="number" id="userGoalWeight" step="0.1" placeholder="kg" value="52">
+            </div>
+        </div>
+        <div class="form-row">
+            <label>日常活動量 (不含手錶額外運動)</label>
+            <select id="userActivity">
+                <option value="1.2">久坐辦公室、少運動 (TDEE × 1.2)</option>
+                <option value="1.375">輕度活動 (每週輕度運動 1-3 天)</option>
+                <option value="1.55">中度活動 (每週規律中等運動 3-5 天)</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <label>預計達標日期</label>
+            <input type="date" id="userTargetDate">
+        </div>
+        <button class="modal-save-btn" onclick="saveUserProfile()">✨ 算出我的每日豬飼料量！</button>
+    </div>
+</div>
+
+<script>
+    // 預設與使用者個人檔案
+    let userProfile = JSON.parse(localStorage.getItem('piggy_user_profile') || 'null');
+    let allHistory = JSON.parse(localStorage.getItem('piggy_diet_all_history') || '{}');
+
+    function getTodayString() {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    let currentDate = getTodayString();
+    document.getElementById('targetDate').value = currentDate;
+
+    // 依據衛福部食藥署 (TFDA) 台灣食品資料庫整理
+    const TFDA_FOOD_DB = {
+        "茶葉蛋": 75, "水煮蛋": 70, "荷包蛋": 95, "蒸蛋": 65,
+        "雞胸肉": 165, "去皮雞腿": 180, "板豆腐": 85, "嫩豆腐": 55, "傳統豆乾": 70,
+        "鮭魚片": 220, "鯛魚片": 110, "無糖豆漿": 125, "低糖豆漿": 180,
+        "白飯": 280, "糙米飯": 270, "地瓜": 140, "馬鈴薯": 115, "水煮玉米": 110,
+        "燕麥片": 150, "全麥吐司": 75, "白吐司": 90, "白饅頭": 280,
+        "排骨便當": 850, "炸雞腿便當": 920, "滷雞腿便當": 720, "招牌水餃": 60,
+        "乾麵": 450, "陽春湯麵": 320, "牛肉麵": 650, "肉包": 220, "菜包": 180,
+        "原味蛋餅": 260, "蘿蔔糕": 220, "香蕉": 90, "蘋果": 60, "芭樂": 65,
+        "美式黑咖啡": 15, "中杯拿鐵": 180, "大杯拿鐵": 220, "全脂鮮乳": 150,
+        "蛋捲": 110, "綜合堅果": 90
+    };
+
+    function initFoodDatalist() {
+        const datalist = document.getElementById('tfdaFoodList');
+        datalist.innerHTML = Object.keys(TFDA_FOOD_DB)
+            .map(name => `<option value="${name}">${name} (約 ${TFDA_FOOD_DB[name]} 大卡)</option>`)
+            .join('');
+    }
+
+    function autoEstimateCal(inputValue) {
+        const query = inputValue.trim();
+        if (!query) return;
+
+        if (TFDA_FOOD_DB[query]) {
+            document.getElementById('foodCal').value = TFDA_FOOD_DB[query];
+            return;
+        }
+
+        for (const [name, cal] of Object.entries(TFDA_FOOD_DB)) {
+            if (query.includes(name) || name.includes(query)) {
+                document.getElementById('foodCal').value = cal;
+                break;
+            }
+        }
+    }
+
+    function hapticFeedback() {
+        if (navigator.vibrate) navigator.vibrate(15);
+    }
+
+    // 打開與關閉個人設定彈窗
+    function openProfileModal() {
+        if (userProfile) {
+            document.getElementById('userGender').value = userProfile.gender;
+            document.getElementById('userAge').value = userProfile.age;
+            document.getElementById('userHeight').value = userProfile.height;
+            document.getElementById('userWeight').value = userProfile.weight;
+            document.getElementById('userGoalWeight').value = userProfile.goalWeight;
+            document.getElementById('userActivity').value = userProfile.activity;
+            document.getElementById('userTargetDate').value = userProfile.targetDate;
+        } else {
+            // 預設達標日期為 2 個月後
+            let d = new Date();
+            d.setMonth(d.getMonth() + 2);
+            let y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+            document.getElementById('userTargetDate').value = `${y}-${m}-${day}`;
+        }
+        document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    function closeProfileModal() {
+        document.getElementById('profileModal').style.display = 'none';
+    }
+
+    // 計算 BMR, TDEE, 每日建議飼料量
+    function calculateDailyAllowance(profile) {
+        // Mifflin-St Jeor 公式
+        let bmr = (10 * profile.weight) + (6.25 * profile.height) - (5 * profile.age);
+        bmr += (profile.gender === 'male' ? 5 : -161);
+        
+        let tdee = bmr * profile.activity;
+
+        // 計算天數與要減的公斤數 (1 kg 脂肪約 7700 kcal)
+        let now = new Date();
+        let target = new Date(profile.targetDate);
+        let diffTime = target - now;
+        let days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (days < 7) days = 7; // 至少留 7 天緩衝
+
+        let weightToLose = profile.weight - profile.goalWeight;
+        let dailyDeficit = 0;
+        if (weightToLose > 0) {
+            let totalCalDeficit = weightToLose * 7700;
+            dailyDeficit = totalCalDeficit / days;
+        }
+
+        // 安全防護：每日缺口上限建議為 1000 卡（太猛會傷身掉肌肉）
+        if (dailyDeficit > 1000) dailyDeficit = 1000;
+
+        let baseAllowance = Math.round(tdee - dailyDeficit);
+
+        // 安全底線：女不低於 1200，男不低於 1500
+        let minFloor = profile.gender === 'male' ? 1500 : 1200;
+        if (baseAllowance < minFloor) {
+            baseAllowance = minFloor;
+        }
+
+        return {
+            bmr: Math.round(bmr),
+            tdee: Math.round(tdee),
+            daysLeft: days,
+            baseAllowance: baseAllowance
+        };
+    }
+
+    function saveUserProfile() {
+        hapticFeedback();
+        let gender = document.getElementById('userGender').value;
+        let age = parseInt(document.getElementById('userAge').value) || 25;
+        let height = parseFloat(document.getElementById('userHeight').value) || 160;
+        let weight = parseFloat(document.getElementById('userWeight').value) || 55;
+        let goalWeight = parseFloat(document.getElementById('userGoalWeight').value) || 50;
+        let activity = parseFloat(document.getElementById('userActivity').value) || 1.2;
+        let targetDate = document.getElementById('userTargetDate').value;
+
+        if (!targetDate) {
+            alert("請選擇預計達標的日期喔！");
+            return;
+        }
+
+        userProfile = { gender, age, height, weight, goalWeight, activity, targetDate };
+        localStorage.setItem('piggy_user_profile', JSON.stringify(userProfile));
+        
+        closeProfileModal();
+        updateDisplay();
+    }
+
+    function getCurrentRecords() {
+        return allHistory[currentDate] || [];
+    }
+
+    function saveState() {
+        localStorage.setItem('piggy_diet_all_history', JSON.stringify(allHistory));
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        if (!userProfile) {
+            openProfileModal();
+            return;
+        }
+
+        let calc = calculateDailyAllowance(userProfile);
+        let baseTarget = calc.baseAllowance;
+
+        // 更新頂部資訊卡
+        document.getElementById('targetSubtitle').innerText = 
+            `目標：${userProfile.targetDate} 瘦到 ${userProfile.goalWeight} kg 🎯`;
+        document.getElementById('profileSummary').innerHTML = 
+            `<strong>${userProfile.weight}kg ➔ ${userProfile.goalWeight}kg</strong> (剩餘 ${calc.daysLeft} 天)<br>` +
+            `<span style="color:#a26775;">TDEE:${calc.tdee} | 基礎配額:${baseTarget}卡/天</span>`;
+
+        const records = getCurrentRecords();
+        let currentCalories = records.filter(r => r.type === 'food').reduce((sum, r) => sum + r.cal, 0);
+        let bonusCalories = records.filter(r => r.type === 'burn').reduce((sum, r) => sum + r.cal, 0);
+        let totalTarget = baseTarget + bonusCalories;
+
+        document.getElementById('netCal').innerText = currentCalories + " 大卡";
+        document.getElementById('targetInfo').innerText = 
+            `當日燃脂總限額：${totalTarget} 大卡 (基礎配額${baseTarget} + 運動獎勵${bonusCalories})`;
+
+        let statusElement = document.getElementById('dietStatus');
+        let netCalElement = document.getElementById('netCal');
+
+        if (currentCalories > totalTarget) {
+            netCalElement.className = "net-calories alert";
+            statusElement.innerText = "❌ 今日狀態：熱量超標啦！豬豬注意！";
+            statusElement.className = "result-status status-fail";
+        } else {
+            netCalElement.className = "net-calories";
+            let balance = totalTarget - currentCalories;
+            statusElement.innerText = `👍 今日狀態：安全！還能吃 ${balance} 卡豬飼料`;
+            statusElement.className = "result-status status-success";
+        }
+
+        let logContainer = document.getElementById('logList');
+        if (records.length === 0) {
+            logContainer.innerHTML = "這天還沒有任何紀錄喔...";
+        } else {
+            logContainer.innerHTML = records.map((item, idx) => `
+                <div class="log-row">
+                    <span>[${item.time}] ${item.text}</span>
+                    <button class="log-del-btn" title="刪除此筆" onclick="deleteRecord(${idx})">✕</button>
+                </div>
+            `).join('');
+        }
+    }
+
+    function addCustomBurn() {
+        hapticFeedback();
+        let nameInput = document.getElementById('burnName');
+        let calInput = document.getElementById('burnCal');
+        let name = nameInput.value.trim() || "手錶動態運動";
+        let cal = parseInt(calInput.value);
+
+        if (isNaN(cal) || cal <= 0) { 
+            alert("請輸入正確的消耗卡路里！"); 
+            return; 
+        }
+
+        let time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        if (!allHistory[currentDate]) allHistory[currentDate] = [];
+        allHistory[currentDate].push({ type: 'burn', cal: cal, time: time, text: `達成 ${name}！額度 +${cal}卡` });
+
+        nameInput.value = ""; calInput.value = "";
+        saveState();
+    }
+
+    function addCustomCal() {
+        hapticFeedback();
+        let nameInput = document.getElementById('foodName');
+        let calInput = document.getElementById('foodCal');
+        let name = nameInput.value.trim() || "美味豬飼料";
+        let cal = parseInt(calInput.value);
+
+        if (isNaN(cal) || cal <= 0) { 
+            alert("請輸入正確的卡路里！"); 
+            return; 
+        }
+
+        let time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        if (!allHistory[currentDate]) allHistory[currentDate] = [];
+        allHistory[currentDate].push({ type: 'food', cal: cal, time: time, text: `吃 ${name} +${cal}卡` });
+
+        nameInput.value = ""; calInput.value = "";
+        saveState();
+    }
+
+    function deleteRecord(index) {
+        hapticFeedback();
+        if (allHistory[currentDate]) {
+            allHistory[currentDate].splice(index, 1);
+            saveState();
+        }
+    }
+
+    function resetLog() {
+        hapticFeedback();
+        if (confirm(`確定要清空 ${currentDate} 這天的紀錄嗎？`)) {
+            delete allHistory[currentDate];
+            saveState();
+        }
+    }
+
+    function switchDate(newDate) {
+        if (!newDate) return;
+        currentDate = newDate;
+        document.getElementById('targetDate').value = currentDate;
+        updateDisplay();
+    }
+
+    function shiftDate(offset) {
+        hapticFeedback();
+        const parts = currentDate.split('-');
+        const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+        dateObj.setDate(dateObj.getDate() + offset);
+        
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        switchDate(`${year}-${month}-${day}`);
+    }
+
+    // 初始化
+    initFoodDatalist();
+    updateDisplay();
+</script>
+</body>
+</html>
